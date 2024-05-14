@@ -1,48 +1,94 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define MAX 1000000
 #define ll long long
-#define MOD 1000000007
-#define bs 191
+#define pr 7
+#define type 'a'
+#define NUM_OF_HASH 1
+#define MAX (int)1e6
 
-char str[MAX + 5], T[MAX + 5];
-ll H[MAX + 5], po[MAX + 5];
+ll Hash[NUM_OF_HASH][MAX+5];
+ll power[NUM_OF_HASH][MAX+5];
+ll MOD[] = {1000000007, 1000000009, 998244353, 1000000037,1000000021,1000000003,1000005133};
+char str[MAX+5],mt[MAX+5];
+int len;
 
-void pre() /// O(N)
+void pre()
 {
-    int n = strlen(str);
-    H[0] = str[0];
-    for(int i = 1; i < n; i++)
+    for(int i=0; i<NUM_OF_HASH; i++)
     {
-        H[i] = ((bs * H[i - 1]) % MOD + str[i]);
-        if(H[i] > MOD)
-            H[i] %= MOD;
+        power[i][0] = 1;
+        for(int j=1; j<=len; j++)
+        {
+            power[i][j] = (power[i][j-1]*pr)%MOD[i];
+        }
+        Hash[i][0] = str[0]-type;
+        for(int j=1; j<=len; j++)
+        {
+            Hash[i][j] = (Hash[i][j-1]*pr + str[j]-type)%MOD[i];
+        }
     }
+    return;
 }
 
-ll getHash(int L, int R) /// O(1)
+ll getHash(int i,int j,int k)
 {
-    if(L == 0)
-        return H[R];
-    ll left = H[R];
-    ll right = (H[L - 1] * po[R - L + 1]);
-    if(right > MOD)
-        right %= MOD;
-    return (left - right + MOD) % MOD;
+    return (Hash[k][j]-(Hash[k][i-1]*power[k][j-i+1])+MOD[k]*MOD[k])%MOD[k];
 }
 
-ll get_T_hash()
+ll calcHash(int sz)
 {
-    ll h = 0;
-    int nt = strlen(T);
-    for(int i = 0; i < nt; i++)
+    ll res = mt[0]-type;
+    for(int j=1; j<sz; j++)
     {
-        h = ((h * bs) + T[i]);
-        if(h > MOD)
-            h %= MOD;
+        res = (res*pr + mt[j]-type)%MOD[0];
     }
-    return (h + MOD) % MOD;
+    return res;
 }
+// #include <bits/stdc++.h>
+// using namespace std;
+// #define MAX 1000000
+// #define ll long long
+// #define MOD 1000000007
+// #define bs 191
+
+// char str[MAX + 5], T[MAX + 5];
+// ll H[MAX + 5], po[MAX + 5];
+
+// void pre() /// O(N)
+// {
+//     int n = strlen(str);
+//     H[0] = str[0];
+//     for(int i = 1; i < n; i++)
+//     {
+//         H[i] = ((bs * H[i - 1]) % MOD + str[i]);
+//         if(H[i] > MOD)
+//             H[i] %= MOD;
+//     }
+// }
+
+// ll getHash(int L, int R) /// O(1)
+// {
+//     if(L == 0)
+//         return H[R];
+//     ll left = H[R];
+//     ll right = (H[L - 1] * po[R - L + 1]);
+//     if(right > MOD)
+//         right %= MOD;
+//     return (left - right + MOD) % MOD;
+// }
+
+// ll get_T_hash()
+// {
+//     ll h = 0;
+//     int nt = strlen(T);
+//     for(int i = 0; i < nt; i++)
+//     {
+//         h = ((h * bs) + T[i]);
+//         if(h > MOD)
+//             h %= MOD;
+//     }
+//     return (h + MOD) % MOD;
+// }
 // const int BASE = 257;
 // const long long MOD = 202206214218227LL;
 // array<long long, 1510> prefHash, pw;
